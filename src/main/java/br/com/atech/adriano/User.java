@@ -25,6 +25,8 @@ public class User {
 	
 	String password;
 
+	boolean isAtive = true;
+
 	public Long getId() {
 		return id;
 	}
@@ -55,5 +57,13 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public boolean isAtive() {
+		return isAtive;
+	}
+
+	public void setAtive(boolean isAtive) {
+		this.isAtive = isAtive;
 	}
 }
