@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -30,6 +31,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/user")
+	@ApiOperation("Cria um usuário")
 	public User createUser(@RequestBody User user) {
 		
 		this.validateUser(user);
