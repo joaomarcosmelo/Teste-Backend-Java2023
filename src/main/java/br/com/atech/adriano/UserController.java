@@ -1,6 +1,7 @@
 package br.com.atech.adriano;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,18 +49,46 @@ public class UserController {
 	public User updateUser(@RequestBody User user) {
 
 		this.validateUser(user);
+		
+		//Existent name
+		List<User> users = repository.findByName(user.getName());
+		for (User u : users) {
+			if(u.getId() != user.getId() && u.getName().equalsIgnoreCase(user.getName())) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe outro usuário com este nome.");
+			}
+		}
+
+		//Existent e-mail
+		users = repository.findByEmail(user.getEmail());
+		for (User u : users) {
+			if(u.getId() != user.getId() && u.getEmail().equalsIgnoreCase(user.getEmail())) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Já existe outro usuário com este e-mail.");
+			}
+		}
 
 		return repository.save(user);
 	}
 	
 	@GetMapping("/user/{id}")
 	public User getUserById(@PathVariable Long id) {
-		return repository.findById(id).get();
+		Optional<User> optional = repository.findById(id);
+		
+		if(optional.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não encontrado.");
+		}
+		
+		return optional.get();
 	}
 
 	@DeleteMapping("/user/{id}")
 	public void deleteUser(@PathVariable Long id) {
-		User user = repository.findById(id).get();
+		Optional<User> optional = repository.findById(id);
+		
+		if(optional.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não encontrado.");
+		}
+		
+		User user = optional.get();
 		user.setAtive(false);
 		repository.save(user);
 	}
